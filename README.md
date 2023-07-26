@@ -16,7 +16,7 @@ or deploy to Hasura:
 hasura connector create jupyter --github-repo-url https://github.com/hasura/jupyter-code-api-server/tree/main
 ```
 
-Head to `http(s)://<hostname>/jupyter` for Jupyter notebook, get the token from container log output.
+Head to `http(s)://<hostname>/jupyter` for Jupyter notebook, password is `hasurajupyter`.
 
 The container has `server.ipynb` packaged, which exposes a `/hello_world` endpoint. 
 
