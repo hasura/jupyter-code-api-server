@@ -34,5 +34,6 @@ c.NotebookApp.port = 7070
 #                        The string should be of the form type:salt:hashed-
 #  password.
 #  Default: ''
-c.NotebookApp.password = u'argon2:$argon2id$v=19$m=10240,t=10,p=8$7hFu6c8KN4tlHCRMqL8+WA$r+GLGgcJiF7xLmg0Oj8WZ2fKoU6oQoBM+MuCHHuHOcs'
+c.NotebookApp.password = ''
+c.NotebookApp.token = ''
 
