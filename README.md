@@ -20,7 +20,7 @@ Head to `http(s)://<hostname>/jupyter` for Jupyter notebook, get the token from 
 
 The container has `server.ipynb` packaged, which exposes a `/hello_world` endpoint. 
 
-User Jupyter notebook to browse the code. Hit `http(s)://<hostname>/start` to start the server and then hit `http(s)://<hostname>/invoke/hello_world` to invoke the API.
+Use Jupyter notebook to browse the code. Hit `http(s)://<hostname>/start` to start the server and then hit `http(s)://<hostname>/invoke/hello_world` to invoke the API.
 
 More details on how to write APIs using Jupyter can be found here: https://jupyter-kernel-gateway.readthedocs.io/en/latest/http-mode.html
 
