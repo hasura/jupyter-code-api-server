@@ -13,7 +13,7 @@ docked run -p 5000:8080 jupyter-code-api-server
 or deploy to Hasura:
 
 ```sh
-hasura connector create --github-repo-url https://github.com/hasura/jupyter-code-api-server/tree/main
+hasura connector create jupyter --github-repo-url https://github.com/hasura/jupyter-code-api-server/tree/main
 ```
 
 Head to `http(s)://<hostname>/jupyter` for Jupyter notebook, get the token from container log output.
