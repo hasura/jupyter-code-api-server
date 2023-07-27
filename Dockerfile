@@ -2,6 +2,8 @@ FROM python:3
 
 #RUN apt update && apt install -y nginx jq apache2-utils
 # Install system dependencies
+ARG DEBIAN_FRONTEND=noninteractive
+
 RUN set -e; \
     apt-get update -y && apt-get install -y \
     nginx \
@@ -24,11 +26,6 @@ RUN set -e; \
 ENV MNT_DIR /mnt/gcs
 ENV BUCKET hasura-jupyter-notebook-store
 ENV K_SERVICE dev_connector
-
-
-ARG DEBIAN_FRONTEND=noninteractive
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
-RUN apt-get install -y build-essential nodejs npm
 
 RUN pip install Werkzeug
 RUN pip install openai
