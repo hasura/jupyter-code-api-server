@@ -10,9 +10,9 @@ RUN pip install jupyter_kernel_gateway
 #RUN mkdir /etc/connector
 
 COPY notebook /notebook
+COPY config.json /config.json
 COPY config.json /etc/connector/config.json
 COPY jupyter_notebook_config.py /jupyter_notebook_config.py
-
 
 
 ENV TINI_VERSION v0.18.0
