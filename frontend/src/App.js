@@ -1,5 +1,7 @@
+import React from "react";
 import GithubIcon from "./GithubIcon";
 import HasuraLogo from "./HasuraLogo";
+import { toast } from "react-toastify";
 
 const REPO_LINK = "https://github.com/hasura/jupyter-code-api-server";
 
@@ -9,14 +11,52 @@ const openLink = (url) => {
   }
 };
 
+const request = async (path) => {
+  try {
+    return await fetch(makeUrl(path)).then((response) => response.json());
+  } catch (e) {
+    toast("an error has occurred", { data: e, type: "error" });
+  }
+};
+
+const PATHS = {
+  process: {
+    start: "/process/start",
+    restart: "/process/restart",
+    stop: "/process/stop",
+  },
+  invoke: {
+    hello_world: "/invoke/hello_world",
+  },
+};
+
+const makeUrl = (path) => {
+  return `${window.location.protocol}//${window.location.host}${path}`;
+};
+
 function App() {
+  const onClickStartButton = () => {
+    const res = request(PATHS.process.start);
+    toast("Gateway process started!", { data: res, type: "success" });
+  };
+
+  const onClickRestartButton = () => {
+    const res = request(PATHS.process.restart);
+    toast("Gateway process re-started!", { data: res, type: "success" });
+  };
+
+  const onClickStopButton = () => {
+    const res = request(PATHS.process.stop);
+    toast("Gateway process is now stopped!", { data: res, type: "success" });
+  };
+
   return (
     <div className="w-screen h-screen bg-bg flex items-center justify-center">
       <div className="w-full h-[80%] max-h-full flex p-[72px] rounded-[24px] bg-white my-[130px] mx-[100px] shadow-md">
         <div className="w-full h-full flex flex-col">
           <HasuraLogo />
           <h2 className="font-inter mt-3 text-[32px] text-center mb-3">
-            Jupyter Python Notebook & API server
+            Jupyter Python Notebook &amp; API server
           </h2>
           <div className="flex mt-4">
             <div className="flex flex-col w-1/2 items-center h-full">
@@ -34,19 +74,9 @@ function App() {
               <form action="/jupyter" target="_blank">
                 <Button type="submit">Launch Notebook</Button>
               </form>
-
-              <form action="/process/start" method="get" target="_blank">
-                <Button type="submit">Start API</Button>
-              </form>
-
-              <form action="/process/restart" method="get" target="_blank">
-                <Button type="submit">Restart API</Button>
-              </form>
-
-              <form action="/process/stop" method="get" target="_blank">
-                <Button type="submit">Stop API</Button>
-              </form>
-
+              <Button onClick={onClickStartButton}>Start API</Button>
+              <Button onClick={onClickRestartButton}>Restart API</Button>
+              <Button onClick={onClickStopButton}>Stop API</Button>
               <form action="/invoke/hello_world" method="get" target="_blank">
                 <Button type="submit">Test API</Button>
               </form>
