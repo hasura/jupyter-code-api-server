@@ -6,7 +6,14 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
 RUN apt-get install -y build-essential nodejs npm
 
-RUN pip install Flask jupyter jupyter_kernel_gateway Werkzeug
+RUN pip install Werkzeug
+RUN pip install openai
+RUN pip install langchain
+RUN pip install weaviate-client
+RUN pip install gql[all]
+RUN pip install Flask
+RUN pip install jupyter
+RUN pip install jupyter_kernel_gateway
 
 #RUN mkdir /etc/nginx
 #RUN mkdir /etc/connector
