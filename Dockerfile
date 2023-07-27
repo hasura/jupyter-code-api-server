@@ -27,14 +27,7 @@ ENV MNT_DIR /mnt/gcs
 ENV BUCKET hasura-jupyter-notebook-store
 ENV K_SERVICE dev_connector
 
-RUN pip install Werkzeug
-RUN pip install openai
-RUN pip install langchain
-RUN pip install weaviate-client
-RUN pip install gql[all]
-RUN pip install Flask
-RUN pip install jupyter
-RUN pip install jupyter_kernel_gateway
+RUN pip install Werkzeug openai langchain weaviate-client gql[all] Flask jupyter jupyter_kernel_gateway
 
 #RUN mkdir /etc/nginx
 #RUN mkdir /etc/connector
