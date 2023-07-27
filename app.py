@@ -28,7 +28,7 @@ class JupyterCodeAPIServer:
 
         return {
             'process_id': self.__process.pid,
-            'message': 'process initiated'
+            'message': 'process is running'
         }
 
     def restart_handler(self):
