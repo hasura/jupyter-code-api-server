@@ -30,6 +30,6 @@ RUN chmod +x /tini
 WORKDIR /src
 COPY app.py start.sh nginx.conf ./
 COPY frontend frontend
-RUN cd frontend && rm -rf ./node_modules && npm install && npm run build && cd ..
+#RUN cd frontend && rm -rf ./node_modules && npm install && npm run build && cd ..
 
 ENTRYPOINT ["/tini", "--", "./start.sh"]
