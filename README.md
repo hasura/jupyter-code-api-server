@@ -7,7 +7,7 @@ A container with Jupyter and Jupyter Kernal Gateway to write python code and exp
 docker build . -t jupyter-code-api-server
 
 # run the container
-docker run -p 5000:8080 -e LOCAL_DEV=yes jupyter-code-api-server
+docker run -p 5000:8080 jupyter-code-api-server 
 ```
 
 or deploy to Hasura:

@@ -24,7 +24,7 @@ class JupyterCodeAPIServer:
                 'message': f'there is process {self.__process.pid} already running'
             }
         
-        self.__process = subprocess.Popen(["jupyter", "kernelgateway", "--api='kernel_gateway.notebook_http'", "--seed_uri='/mnt/gcs/notebook/server.ipynb'", "--port", "9090"])
+        self.__process = subprocess.Popen(["jupyter", "kernelgateway", "--api='kernel_gateway.notebook_http'", "--seed_uri='/notebook/server.ipynb'", "--port", "9090"])
 
         return {
             'process_id': self.__process.pid,

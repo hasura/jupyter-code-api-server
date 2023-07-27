@@ -1,33 +1,19 @@
 FROM python:3
 
-#RUN apt update && apt install -y nginx jq apache2-utils
-# Install system dependencies
+RUN apt update && apt install -y nginx jq apache2-utils
+
 ARG DEBIAN_FRONTEND=noninteractive
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
+RUN apt-get install -y build-essential nodejs npm
 
-RUN set -e; \
-    apt-get update -y && apt-get install -y \
-    nginx \
-    jq \
-    apache2-utils \
-    curl apt-transport-https ca-certificates \
-    lsb-release; \
-    gcsFuseRepo=gcsfuse-`lsb_release -c -s`; \
-    echo "deb http://packages.cloud.google.com/apt $gcsFuseRepo main" | \
-    tee /etc/apt/sources.list.d/gcsfuse.list; \
-    echo "deb http://packages.cloud.google.com/apt cloud-sdk main" | \
-    tee -a /etc/apt/sources.list.d/google-cloud-sdk.list; \
-    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
-    apt-key add -; \
-    apt-get update; \
-    apt-get install -y gcsfuse google-cloud-sdk \
-    && apt-get clean
-
-# Set fallback mount directory
-ENV MNT_DIR /mnt/gcs
-ENV BUCKET hasura-jupyter-notebook-store
-ENV K_SERVICE dev_connector
-
-RUN pip install Werkzeug openai langchain weaviate-client gql[all] Flask jupyter jupyter_kernel_gateway
+RUN pip install Werkzeug
+RUN pip install openai
+RUN pip install langchain
+RUN pip install weaviate-client
+RUN pip install gql[all]
+RUN pip install Flask
+RUN pip install jupyter
+RUN pip install jupyter_kernel_gateway
 
 #RUN mkdir /etc/nginx
 #RUN mkdir /etc/connector
