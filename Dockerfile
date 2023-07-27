@@ -2,6 +2,10 @@ FROM python:3
 
 RUN apt update && apt install -y nginx
 
+RUN pip install openai
+RUN pip install langchain
+RUN pip install weaviate-client
+RUN pip install gql[all]
 RUN pip install Flask
 RUN pip install jupyter
 RUN pip install jupyter_kernel_gateway
