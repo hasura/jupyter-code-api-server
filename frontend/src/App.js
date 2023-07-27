@@ -16,7 +16,7 @@ function App() {
         <div className="w-full h-full flex flex-col">
           <HasuraLogo />
           <h2 className="font-inter mt-3 text-[32px] text-center mb-3">
-            Jupyter Code API Server
+            Jupyter Python Notebook & API server
           </h2>
           <div className="flex mt-4">
             <div className="flex flex-col w-1/2 items-center h-full">
