@@ -10,8 +10,8 @@ ENV POETRY_VERSION=1.4.2\
     POETRY_HOME="/opt/poetry" \
     POETRY_VIRTUALENVS_IN_PROJECT=true \
     POETRY_NO_INTERACTION=1 \
-    PYSETUP_PATH="/" \
-    VENV_PATH="/.venv" 
+    PYSETUP_PATH="/src" \
+    VENV_PATH="/src/.venv"
 
 # Prepend poetry and venv to path
 ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
@@ -28,12 +28,13 @@ RUN pip3 install jupyter_kernel_gateway
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static /tini
 RUN chmod +x /tini
 
+COPY notebook /notebook
+
 # switch working directory
 WORKDIR $PYSETUP_PATH
 COPY . .
 
 RUN poetry config virtualenvs.create false
-RUN poetry install --no-dev 
-
+RUN poetry install --no-root --no-dev --verbose
 
 ENTRYPOINT ["/tini", "--", "./start.sh"]
