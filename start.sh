@@ -12,7 +12,7 @@ if [ ${PATH_EXIST} -eq 0 ]; then
   echo "bucket exist"
 else
   echo "bucket does not exist"
-  gsutil -m cp -r /notebook gs://$BUCKET/$K_SERVICE
+  gsutil -m cp -r /notebook gs://$BUCKET/$K_SERVICE/notebook
 fi
 
 # Create mount directory for service
