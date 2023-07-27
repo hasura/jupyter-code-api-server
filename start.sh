@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 set -e
 
-SET_PASSWORD="$(cat /etc/connector/config.json | jq -r '.password')"
+#SET_PASSWORD="$(cat /etc/connector/config.json | jq -r '.password')"
 DEFAULT_PASSWORD="$(cat /config.json | jq -r '.password')"
 
-PASSWORD="${SET_PASSWORD:-$DEFAULT_PASSWORD}"
+#PASSWORD="${SET_PASSWORD:-$DEFAULT_PASSWORD}"
 
 flask run --port 6060 &
 
 # set htpasswd for nginx basic auth
-htpasswd -db -c /etc/nginx/.htpasswd hasura "$PASSWORD"
+htpasswd -db -c /etc/nginx/.htpasswd hasura "$DEFAULT_PASSWORD"
 
 nginx -c "$PWD/nginx.conf" &
 
