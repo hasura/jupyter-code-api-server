@@ -2,7 +2,7 @@
 set -e
 
 #SET_PASSWORD="$(cat /etc/connector/config.json | jq -r '.password')"
-DEFAULT_PASSWORD="$(cat /config.json | jq '.password')"
+DEFAULT_PASSWORD="$(cat /etc/connector/config.json | jq -r '.password')"
 
 #PASSWORD="${SET_PASSWORD:-$DEFAULT_PASSWORD}"
 
