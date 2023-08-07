@@ -19,7 +19,7 @@ c.NotebookApp.allow_origin = '*'
 
 ## The IP address the notebook server will listen on.
 #  Default: 'localhost'
-# c.NotebookApp.ip = '0.0.0.0'
+c.NotebookApp.ip = '0.0.0.0'
 
 ## The port the notebook server will listen on (env: JUPYTER_PORT).
 #  Default: 8888
