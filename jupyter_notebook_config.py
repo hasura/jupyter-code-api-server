@@ -37,3 +37,4 @@ c.NotebookApp.port = 7070
 c.NotebookApp.password = ''
 c.NotebookApp.token = ''
 
+c.NotebookApp.allow_remote_access = True

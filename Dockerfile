@@ -15,6 +15,9 @@ RUN pip install Flask
 RUN pip install jupyter
 RUN pip install jupyter_kernel_gateway
 
+# supervisor
+RUN pip install supervisor git+https://github.com/coderanger/supervisor-stdout
+
 #RUN mkdir /etc/nginx
 #RUN mkdir /etc/connector
 
@@ -30,6 +33,7 @@ RUN chmod +x /tini
 WORKDIR /src
 COPY app.py start.sh nginx.conf ./
 COPY frontend frontend
+COPY supervisor/ /supervisor/
 #RUN cd frontend && rm -rf ./node_modules && npm install && npm run build && cd ..
 
 ENTRYPOINT ["/tini", "--", "./start.sh"]
