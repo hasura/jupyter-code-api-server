@@ -34,6 +34,7 @@ WORKDIR /src
 COPY app.py start.sh nginx.conf ./
 COPY frontend frontend
 COPY supervisor/ /supervisor/
+RUN chmod +x /supervisor/stop-supervisor.sh
 #RUN cd frontend && rm -rf ./node_modules && npm install && npm run build && cd ..
 
 ENTRYPOINT ["/tini", "--", "./start.sh"]
