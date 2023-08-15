@@ -22,7 +22,7 @@ else
 
   echo "Mounting GCS Fuse."
   echo "Mounting Bucket $K_SERVICE at $MNT_DIR"
-  gcsfuse --implicit-dirs --debug_http --debug_gcs --debug_fuse "$K_SERVICE" "$MNT_DIR"
+  gcsfuse --implicit-dirs "$K_SERVICE" "$MNT_DIR"
   #gcsfuse --implicit-dirs --only-dir "$K_SERVICE/" --debug_http --debug_gcs --debug_fuse $BUCKET $MNT_DIR
   echo "Mounting completed."
 fi
