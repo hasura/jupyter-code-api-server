@@ -6,7 +6,9 @@ mkdir -p "$MNT_DIR"
 backup_notebook_to_bucket() {
     while true; do
         sleep 60
+        echo "triggering backup"
         gsutil -m rsync -r "$MNT_DIR" "gs://$K_SERVICE/notebook"
+        echo "backup done"
     done
 }
 
