@@ -1,7 +1,13 @@
+import React from "react";
 import GithubIcon from "./GithubIcon";
 import HasuraLogo from "./HasuraLogo";
+import { toast } from "react-toastify";
 
 const REPO_LINK = "https://github.com/hasura/jupyter-code-api-server";
+
+const request = (path) => {
+  return fetch(makeUrl(path)).then((data) => data.json());
+};
 
 const openLink = (url) => {
   if (window && window.open) {
@@ -9,7 +15,70 @@ const openLink = (url) => {
   }
 };
 
+const PATHS = {
+  process: {
+    start: "/process/start",
+    restart: "/process/restart",
+    stop: "/process/stop",
+  },
+  invoke: {
+    hello_world: "/invoke/hello_world",
+  },
+};
+
+const makeUrl = (path) => {
+  return `${window.location.protocol}//${window.location.host}${path}`;
+};
+
 function App() {
+  const onClickStartButton = () => {
+    const res = request(PATHS.process.start);
+    toast.promise(res, {
+      success: {
+        render({ data }) {
+          return `${data.message}`;
+        },
+      },
+      error: "Failed",
+    });
+  };
+
+  const onClickRestartButton = () => {
+    const res = request(PATHS.process.restart);
+    toast.promise(res, {
+      success: {
+        render({ data }) {
+          return `${data.message}`;
+        },
+      },
+      error: "Failed",
+    });
+  };
+
+  const onClickStopButton = () => {
+    const res = request(PATHS.process.stop);
+    toast.promise(res, {
+      success: {
+        render({ data }) {
+          return `${data.message}`;
+        },
+      },
+      error: "Failed",
+    });
+  };
+
+  const onClickTestApiButton = () => {
+    const res = request(PATHS.invoke.hello_world);
+    toast.promise(res, {
+      success: {
+        render({ data }) {
+          return "Response -> " + JSON.stringify(data);
+        },
+      },
+      error: "Failed",
+    });
+  };
+
   return (
     <div className="w-screen h-screen bg-bg flex items-center justify-center">
       <div className="w-full h-[80%] max-h-full flex p-[72px] rounded-[24px] bg-white my-[130px] mx-[100px] shadow-md">
@@ -35,21 +104,10 @@ function App() {
                 <Button type="submit">Launch Notebook</Button>
               </form>
 
-              <form action="/process/start" method="get" target="_blank">
-                <Button type="submit">Start API</Button>
-              </form>
-
-              <form action="/process/restart" method="get" target="_blank">
-                <Button type="submit">Restart API</Button>
-              </form>
-
-              <form action="/process/stop" method="get" target="_blank">
-                <Button type="submit">Stop API</Button>
-              </form>
-
-              <form action="/invoke/hello_world" method="get" target="_blank">
-                <Button type="submit">Test API</Button>
-              </form>
+              <Button onClick={onClickStartButton}>Start API</Button>
+              <Button onClick={onClickRestartButton}>Restart API</Button>
+              <Button onClick={onClickStopButton}>Stop API</Button>
+              <Button onClick={onClickTestApiButton}>Test API</Button>
             </div>
           </div>
         </div>
