@@ -28,16 +28,18 @@ class JupyterCodeAPIServer:
     def get_ipynb_files(self):
         notebooks = {}
         for root, dirs, files in os.walk("/mnt/gcs/notebook"):
-        	for file in files:
-        		if(file.endswith(".ipynb") and root.find(".ipynb_checkpoints") == -1):
-        			notebooks[file] = os.path.join(root,file)
+            for file in files:
+                if file.endswith(".ipynb") and root.find(".ipynb_checkpoints") == -1:
+                    notebooks[file] = os.path.join(root, file)
 
         return {"files": notebooks}
 
     def start_handler(self, seed):
         if self.__process is not None:
-            return {"message": f"API server is already running and serving {self.__seed}"}
-        seed_file = seed or  self.__seed
+            return {
+                "message": f"API server is already running and serving {self.__seed}"
+            }
+        seed_file = seed or self.__seed
         self.__process = subprocess.Popen(
             [
                 "jupyter",
@@ -80,7 +82,7 @@ jcas = JupyterCodeAPIServer()
 
 @app.route("/start")
 def start():
-    seed_uri = request.args.get('seed')
+    seed_uri = request.args.get("seed")
     return jcas.start_handler(seed_uri)
 
 
@@ -92,6 +94,7 @@ def restart():
 @app.route("/stop")
 def stop():
     return jcas.stop_handler()
+
 
 @app.route("/list_notebooks")
 def list_notebooks():
