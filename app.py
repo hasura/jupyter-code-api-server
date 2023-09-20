@@ -21,14 +21,13 @@ class JupyterCodeAPIServer:
     def start_handler(self):
         if self.__process is not None:
             return {
-                'message': f'there is process {self.__process.pid} already running'
+                'message': f'API server is already running'
             }
         
         self.__process = subprocess.Popen(["jupyter", "kernelgateway", "--api='kernel_gateway.notebook_http'", "--seed_uri='/mnt/gcs/notebook/server.ipynb'", "--port", "9090"])
 
         return {
-            'process_id': self.__process.pid,
-            'message': 'process is running'
+            'message': 'API server started'
         }
 
     def restart_handler(self):
@@ -43,7 +42,7 @@ class JupyterCodeAPIServer:
     def stop_handler(self):
         if self.__process is None:
             return {
-                'message': 'there is no process running to be stopped. call the /start endpoint to start a process'
+                'message': 'API server is already stopped'
             }
         
         pid = self.__process.pid
@@ -52,7 +51,7 @@ class JupyterCodeAPIServer:
         self.__process = None
 
         return {
-            'message': f'process [{pid}] has been terminated'
+            'message': f'API server stopped'
         }
 
 jcas = JupyterCodeAPIServer()

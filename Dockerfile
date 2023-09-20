@@ -36,7 +36,8 @@ RUN chmod +x /tini
 
 WORKDIR /src
 COPY app.py start.sh nginx.conf ./
-COPY frontend frontend
+# If making FrontEnd changes, build and push the `build` directory as well to save time during deployment
+COPY frontend/build frontend/build
 COPY supervisor/ /supervisor/
 RUN chmod +x /supervisor/stop-supervisor.sh
 
