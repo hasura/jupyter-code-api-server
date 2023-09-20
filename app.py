@@ -1,30 +1,73 @@
-import os
-from flask import Flask
-from datetime import datetime
 import subprocess
+
+from flask import Flask, json
+from datetime import datetime
+from werkzeug.exceptions import HTTPException
 
 app = Flask(__name__)
 
-process = None
+class JupyterCodeAPIServer:
+    def __init__(self):
+        self.__process = None
+    
+    def __str__(self) -> str:
+        current_pid = 'No process running currenly' if self.__process is None else self.__process.pid
+        return f'current process_id: {current_pid}'
+    
+    def __repr__(self) -> str:
+        current_pid = 'None' if self.__process is None else self.__process.pid
+        return f'JupyterCodeAPIServer({current_pid})'
+    
+    def start_handler(self):
+        if self.__process is not None:
+            return {
+                'message': f'there is process {self.__process.pid} already running'
+            }
+        
+        self.__process = subprocess.Popen(["jupyter", "kernelgateway", "--api='kernel_gateway.notebook_http'", "--seed_uri='/mnt/gcs/notebook/server.ipynb'", "--port", "9090"])
+
+        return {
+            'process_id': self.__process.pid,
+            'message': 'process is running'
+        }
+
+    def restart_handler(self):
+        if self.__process is None:
+            return self.start_handler()
+
+        self.__process.kill()
+        self.__process = None
+
+        return self.start_handler()
+    
+    def stop_handler(self):
+        if self.__process is None:
+            return {
+                'message': 'there is no process running to be stopped. call the /start endpoint to start a process'
+            }
+        
+        pid = self.__process.pid
+        
+        self.__process.kill()
+        self.__process = None
+
+        return {
+            'message': f'process [{pid}] has been terminated'
+        }
+
+jcas = JupyterCodeAPIServer()
 
 @app.route('/start')
 def start():
-    global process
-    process = subprocess.Popen(["jupyter", "kernelgateway", "--api='kernel_gateway.notebook_http'", "--seed_uri='/notebook/server.ipynb'", "--port", "9090"])
-    return str(process.pid)
+    return jcas.start_handler()
 
 @app.route('/restart')
 def restart():
-    global process
-    process.kill()
-    process = subprocess.Popen(["jupyter", "kernelgateway", "--api='kernel_gateway.notebook_http'", "--seed_uri='/notebook/server.ipynb'", "--port", "9090"])
-    return str(process.pid)
+    return jcas.restart_handler()
 
 @app.route('/stop')
 def stop():
-    global process
-    process.kill()
-    return str(process.pid)
+    return jcas.stop_handler()
 
 @app.route('/')
 def hello_world():
@@ -34,8 +77,25 @@ def hello_world():
 def hello_world_test():
     return 'Hello test from the server, the time is {}'.format(datetime.now())
 
+# Generic exception handler
+@app.errorhandler(Exception)
+def handle_exception(e):
+    if isinstance(e, HTTPException):
+        response = e.get_response()
+        response.data = json.dumps({
+            "code": e.code,
+            "name": e.name,
+            "description": e.description,
+        })
+        response.content_type = "application/json"
+        return response
+    
+    return {
+        'error': f'{e}',
+        'message': 'unexpected failure occurred'
+    }
+
 if __name__ == "__main__":
     app.run(debug=True,host='0.0.0.0',port=6060)
-
 
 # jupyter kernelgateway --api='kernel_gateway.notebook_http' --seed_uri='/notebook/server.ipynb' --port 9090
