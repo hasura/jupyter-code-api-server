@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import GithubIcon from "./GithubIcon";
 import HasuraLogo from "./HasuraLogo";
 import { toast } from "react-toastify";
+import Dropdown from "./Dropdown";
 
 const REPO_LINK = "https://github.com/hasura/jupyter-code-api-server";
 
@@ -20,6 +21,8 @@ const PATHS = {
     start: "/process/start",
     restart: "/process/restart",
     stop: "/process/stop",
+    getCurrentNb: "/process/get_current_nb",
+    listNotebooks: "/process/list_notebooks",
   },
   invoke: {
     hello_world: "/invoke/hello_world",
@@ -31,11 +34,38 @@ const makeUrl = (path) => {
 };
 
 function App() {
+  const [currentServingNb, setCurrentServingNb] = useState("None");
+  const [selectedNb, setSelectedNb] = useState("");
+  const [allNotebooks, setAllNotebooks] = useState({});
+  const getCurrentServingNb = () => {
+    const res = request(PATHS.process.getCurrentNb);
+    res.then((data) => {
+      setCurrentServingNb(data.message);
+    });
+  };
+
+  const listNotebooks = () => {
+    const res = request(PATHS.process.listNotebooks);
+    res.then((data) => {
+      setAllNotebooks(data.files);
+    });
+  };
+
+  useEffect(() => {
+    getCurrentServingNb();
+    listNotebooks();
+  }, []);
+
   const onClickStartButton = () => {
-    const res = request(PATHS.process.start);
+    if (!selectedNb) {
+      toast.error("Select a notebook to serve");
+      return;
+    }
+    const res = request(PATHS.process.start + `?seed=${selectedNb}`);
     toast.promise(res, {
       success: {
         render({ data }) {
+          getCurrentServingNb();
           return `${data.message}`;
         },
       },
@@ -48,6 +78,7 @@ function App() {
     toast.promise(res, {
       success: {
         render({ data }) {
+          getCurrentServingNb();
           return `${data.message}`;
         },
       },
@@ -60,6 +91,7 @@ function App() {
     toast.promise(res, {
       success: {
         render({ data }) {
+          getCurrentServingNb();
           return `${data.message}`;
         },
       },
@@ -72,11 +104,16 @@ function App() {
     toast.promise(res, {
       success: {
         render({ data }) {
+          getCurrentServingNb();
           return "Response -> " + JSON.stringify(data);
         },
       },
       error: "Failed",
     });
+  };
+
+  const selectNotebook = (item) => {
+    setSelectedNb(item);
   };
 
   return (
@@ -99,15 +136,19 @@ function App() {
                 </span>
               </Button>
             </div>
-            <div className="flex flex-col w-1/2 items-center">
+            <div className="flex flex-col w-1/2 items-left">
               <form action="/jupyter" target="_blank">
                 <Button type="submit">Launch Notebook</Button>
               </form>
-
+              <Dropdown items={allNotebooks} onItemClick={selectNotebook} />
               <Button onClick={onClickStartButton}>Start API</Button>
+
               <Button onClick={onClickRestartButton}>Restart API</Button>
               <Button onClick={onClickStopButton}>Stop API</Button>
               <Button onClick={onClickTestApiButton}>Test API</Button>
+              <span className="font-inter text-xl mb-3">
+                Currently Serving: {currentServingNb}
+              </span>
             </div>
           </div>
         </div>

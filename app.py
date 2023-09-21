@@ -7,11 +7,13 @@ import os
 
 app = Flask(__name__)
 
+default_seed = "/mnt/gcs/notebook/server.ipynb"
+
 
 class JupyterCodeAPIServer:
     def __init__(self):
         self.__process = None
-        self.__seed = "/mnt/gcs/notebook/server.ipynb"
+        self.__seed = default_seed
 
     def __str__(self) -> str:
         current_pid = (
@@ -35,34 +37,41 @@ class JupyterCodeAPIServer:
         return {"files": notebooks}
 
     def start_handler(self, seed):
+        seed_url = seed or default_seed
         if self.__process is not None:
             return {
-                "message": f"API server is already running and serving {self.__seed}"
+                "message": f"API server is already running and serving {self.__seed}. Use Restart to refresh the server or Stop and Start to serve another file."
             }
-        seed_file = seed or self.__seed
         self.__process = subprocess.Popen(
             [
                 "jupyter",
                 "kernelgateway",
                 "--api='kernel_gateway.notebook_http'",
-                f"--seed_uri='{seed_file}'",
+                f"--seed_uri='{seed_url}'",
                 "--port",
                 "9090",
             ]
         )
-        self.__seed = seed_file
+        self.__seed = seed_url
 
-        return {"message": f"API server started and now serving {seed_file}"}
+        return {"message": f"API server started and now serving {seed_url}"}
 
     def restart_handler(self):
+        seed_url = self.__seed
         if self.__process is None:
-            return self.start_handler(self.__seed)
+            return self.start_handler(seed_url)
 
         self.__process.kill()
         self.__process = None
 
-        self.start_handler(self.__seed)
-        return {"message": f"API server restarted and serving {self.__seed}"}
+        self.start_handler(seed_url)
+        return {"message": f"API server restarted and serving {seed_url}"}
+
+    def current_running_server(self):
+        if self.__process is None:
+            return {"message": "None"}
+        file_name = self.__seed.split("/")[-1]
+        return {"message": f"{file_name}"}
 
     def stop_handler(self):
         if self.__process is None:
@@ -72,7 +81,7 @@ class JupyterCodeAPIServer:
 
         self.__process.kill()
         self.__process = None
-        self.__seed = "/mnt/gcs/notebook/server.ipynb"
+        self.__seed = default_seed
 
         return {"message": f"API server stopped"}
 
@@ -99,6 +108,11 @@ def stop():
 @app.route("/list_notebooks")
 def list_notebooks():
     return jcas.get_ipynb_files()
+
+
+@app.route("/get_current_nb")
+def get_current_nb():
+    return jcas.current_running_server()
 
 
 @app.route("/")
