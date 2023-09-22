@@ -1,0 +1,8 @@
+Werkzeug
+openai
+langchain
+weaviate-client
+gql[all]
+Flask
+jupyter
+jupyter_kernel_gateway

@@ -1,7 +1,14 @@
+import React, { useEffect, useState } from "react";
 import GithubIcon from "./GithubIcon";
 import HasuraLogo from "./HasuraLogo";
+import { toast } from "react-toastify";
+import Dropdown from "./Dropdown";
 
 const REPO_LINK = "https://github.com/hasura/jupyter-code-api-server";
+
+const request = (path) => {
+  return fetch(makeUrl(path)).then((data) => data.json());
+};
 
 const openLink = (url) => {
   if (window && window.open) {
@@ -9,7 +16,118 @@ const openLink = (url) => {
   }
 };
 
+const PATHS = {
+  process: {
+    start: "/process/start",
+    restart: "/process/restart",
+    stop: "/process/stop",
+    getCurrentNb: "/process/get_current_nb",
+    listNotebooks: "/process/list_notebooks",
+  },
+  invoke: {
+    hello_world: "/invoke/hello_world",
+  },
+};
+
+const makeUrl = (path) => {
+  return `${window.location.protocol}//${window.location.host}${path}`;
+};
+
 function App() {
+  const [currentServingNb, setCurrentServingNb] = useState("None");
+  const [selectedNb, setSelectedNb] = useState("");
+  const [allNotebooks, setAllNotebooks] = useState({});
+  const getCurrentServingNb = () => {
+    const res = request(PATHS.process.getCurrentNb);
+    res.then((data) => {
+      setCurrentServingNb(data.message);
+    });
+  };
+
+  const listNotebooks = () => {
+    const res = request(PATHS.process.listNotebooks);
+    res.then((data) => {
+      setAllNotebooks(data.files);
+    });
+  };
+
+  useEffect(() => {
+    getCurrentServingNb();
+    listNotebooks();
+  }, []);
+
+  const onClickStartButton = () => {
+    if (!selectedNb) {
+      toast.error("Select a notebook to serve");
+      return;
+    }
+    const res = request(PATHS.process.start + `?seed=${selectedNb}`);
+    toast.promise(res, {
+      success: {
+        render({ data }) {
+          getCurrentServingNb();
+          return `${data.message}`;
+        },
+      },
+      error: "Failed",
+    });
+  };
+
+  const onClickRestartButton = () => {
+    if (currentServingNb === "None") {
+      toast.error("No notebook server is running to restart");
+      return;
+    }
+    const res = request(PATHS.process.restart);
+    toast.promise(res, {
+      success: {
+        render({ data }) {
+          getCurrentServingNb();
+          return `${data.message}`;
+        },
+      },
+      error: "Failed",
+    });
+  };
+
+  const onClickStopButton = () => {
+    if (currentServingNb === "None") {
+      toast.error("No notebook server is running to Stop");
+      return;
+    }
+    const res = request(PATHS.process.stop);
+    toast.promise(res, {
+      success: {
+        render({ data }) {
+          getCurrentServingNb();
+          return `${data.message}`;
+        },
+      },
+      error: "Failed",
+    });
+  };
+
+  const onClickTestApiButton = () => {
+    if (currentServingNb === "None") {
+      toast.error("No notebook server is running to test");
+      return;
+    }
+    const res = request(PATHS.invoke.hello_world);
+    toast.promise(res, {
+      success: {
+        render({ data }) {
+          getCurrentServingNb();
+          return "Response -> " + JSON.stringify(data);
+        },
+      },
+      error: "Test Failed",
+    });
+  };
+
+  const selectNotebook = (item) => {
+    setSelectedNb(item);
+  };
+
   return (
     <div className="w-screen h-screen bg-bg flex items-center justify-center">
       <div className="w-full h-[80%] max-h-full flex p-[72px] rounded-[24px] bg-white my-[130px] mx-[100px] shadow-md">
@@ -30,26 +148,19 @@ function App() {
                 </span>
               </Button>
             </div>
-            <div className="flex flex-col w-1/2 items-center">
+            <div className="flex flex-col w-1/2 items-left">
               <form action="/jupyter" target="_blank">
                 <Button type="submit">Launch Notebook</Button>
               </form>
+              <Dropdown items={allNotebooks} onItemClick={selectNotebook} />
+              <Button onClick={onClickStartButton}>Start API</Button>
 
-              <form action="/process/start" method="get" target="_blank">
-                <Button type="submit">Start API</Button>
-              </form>
-
-              <form action="/process/restart" method="get" target="_blank">
-                <Button type="submit">Restart API</Button>
-              </form>
-
-              <form action="/process/stop" method="get" target="_blank">
-                <Button type="submit">Stop API</Button>
-              </form>
-
-              <form action="/invoke/hello_world" method="get" target="_blank">
-                <Button type="submit">Test API</Button>
-              </form>
+              <Button onClick={onClickRestartButton}>Restart API</Button>
+              <Button onClick={onClickStopButton}>Stop API</Button>
+              <Button onClick={onClickTestApiButton}>Test API</Button>
+              <span className="font-inter text-xl mb-3">
+                Currently Serving: {currentServingNb}
+              </span>
             </div>
           </div>
         </div>
