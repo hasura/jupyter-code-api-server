@@ -74,6 +74,10 @@ function App() {
   };
 
   const onClickRestartButton = () => {
+    if (currentServingNb === "None") {
+      toast.error("No notebook server is running to restart");
+      return;
+    }
     const res = request(PATHS.process.restart);
     toast.promise(res, {
       success: {
@@ -87,6 +91,10 @@ function App() {
   };
 
   const onClickStopButton = () => {
+    if (currentServingNb === "None") {
+      toast.error("No notebook server is running to Stop");
+      return;
+    }
     const res = request(PATHS.process.stop);
     toast.promise(res, {
       success: {
@@ -100,6 +108,10 @@ function App() {
   };
 
   const onClickTestApiButton = () => {
+    if (currentServingNb === "None") {
+      toast.error("No notebook server is running to test");
+      return;
+    }
     const res = request(PATHS.invoke.hello_world);
     toast.promise(res, {
       success: {
@@ -108,7 +120,7 @@ function App() {
           return "Response -> " + JSON.stringify(data);
         },
       },
-      error: "Failed",
+      error: "Test Failed",
     });
   };
 
