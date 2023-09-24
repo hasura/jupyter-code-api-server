@@ -23,7 +23,7 @@ function Dropdown({ items, onItemClick }) {
         className="bg-white text-black leading-8 font-inter font-semibold text-[14px] rounded-[100px] py-3 px-6 w-72 my-2 focus:outline-none relative border-2 border-black"
         title="Select the .ipynb file to serve the APIs from"
       >
-        <div class="flex">
+        <div className="flex">
           <div className="w-64 whitespace-nowrap truncate overflow-visible">
             {selectedItem || "Select Notebook to serve API"}
           </div>
