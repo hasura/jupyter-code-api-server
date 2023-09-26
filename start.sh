@@ -12,10 +12,11 @@ backup_notebook_to_bucket() {
     done
 }
 
+cp -r /notebook "$MNT_DIR"
+
 # don't backup to GCS in local dev
 if [ "$LOCAL_DEV" == "yes" ]; then
   echo "Local dev is configured, don't setup backup"
-  cp -r /notebook "$MNT_DIR"
 else
   echo "Local dev is not setup, configure backup"
   # check if notebook folder exists
