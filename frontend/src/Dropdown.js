@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Transition } from "@headlessui/react";
 
-function Dropdown({ items, onItemClick }) {
+function Dropdown({ items, onItemClick, alreadySelectedItem }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -25,7 +25,9 @@ function Dropdown({ items, onItemClick }) {
       >
         <div className="flex">
           <div className="w-64 whitespace-nowrap truncate overflow-visible">
-            {selectedItem || "Select Notebook to serve API"}
+            {selectedItem ||
+              alreadySelectedItem ||
+              "Select Notebook to serve API"}
           </div>
           <span className={`ml-2 ${isOpen ? "transform rotate-180" : ""}`}>
             &#9660; {/* ASCII downward arrow */}

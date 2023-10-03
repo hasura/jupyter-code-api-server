@@ -1,5 +1,4 @@
 import subprocess
-
 from flask import Flask, json, request
 from datetime import datetime
 from werkzeug.exceptions import HTTPException
@@ -57,15 +56,15 @@ class JupyterCodeAPIServer:
 
         return {"message": f"API server started and now serving {seed}"}
 
-    def restart_handler(self):
+    def restart_handler(self, seed):
         if self.__process is None:
-            return self.start_handler(self.__seed)
+            return self.start_handler(seed)
 
         self.__process.kill()
         self.__process = None
 
-        self.start_handler(self.__seed)
-        return {"message": f"API server restarted and serving {self.__seed}"}
+        self.start_handler(seed)
+        return {"message": f"API server restarted and serving {seed}"}
 
     def current_running_server(self):
         if self.__process is None:
@@ -96,7 +95,8 @@ def start():
 
 @app.route("/restart")
 def restart():
-    return jcas.restart_handler()
+    seed_uri = request.args.get("seed")
+    return jcas.restart_handler(seed_uri)
 
 
 @app.route("/stop")
