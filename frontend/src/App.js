@@ -41,6 +41,9 @@ function App() {
     const res = request(PATHS.process.getCurrentNb);
     res.then((data) => {
       setCurrentServingNb(data.message);
+      if (data.message !== "None") {
+        setSelectedNb(data.message);
+      }
     });
   };
 
@@ -74,11 +77,11 @@ function App() {
   };
 
   const onClickRestartButton = () => {
-    if (currentServingNb === "None") {
-      toast.error("No notebook server is running to restart");
+    if (!selectedNb) {
+      toast.error("Select a notebook to re-start");
       return;
     }
-    const res = request(PATHS.process.restart);
+    const res = request(PATHS.process.restart + `?seed=${selectedNb}`);
     toast.promise(res, {
       success: {
         render({ data }) {
@@ -130,7 +133,7 @@ function App() {
 
   return (
     <div className="w-screen h-screen bg-bg flex items-center justify-center">
-      <div className="w-full h-[80%] max-h-full flex p-[72px] rounded-[24px] bg-white my-[130px] mx-[100px] shadow-md">
+      <div className="w-full h-[80%] max-h-full flex p-[72px] rounded-[24px] bg-white my-[130px] mx-[100px] shadow-md overflow-y-auto overflow-x-auto">
         <div className="w-full h-full flex flex-col">
           <HasuraLogo />
           <h2 className="font-inter mt-3 text-[32px] text-center mb-3">
@@ -152,7 +155,11 @@ function App() {
               <form action="/jupyter" target="_blank">
                 <Button type="submit">Launch Notebook</Button>
               </form>
-              <Dropdown items={allNotebooks} onItemClick={selectNotebook} />
+              <Dropdown
+                items={allNotebooks}
+                onItemClick={selectNotebook}
+                alreadySelectedItem={selectedNb}
+              />
               <Button onClick={onClickStartButton}>Start API</Button>
 
               <Button onClick={onClickRestartButton}>Restart API</Button>

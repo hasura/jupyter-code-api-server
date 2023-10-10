@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3.11-slim-bullseye
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN set -e; \
@@ -6,7 +6,7 @@ RUN set -e; \
     nginx \
     jq \
     apache2-utils \
-    curl apt-transport-https ca-certificates \
+    curl apt-transport-https ca-certificates gnupg2 gcc git\
     lsb-release; \
     echo "deb http://packages.cloud.google.com/apt cloud-sdk main" | \
     tee -a /etc/apt/sources.list.d/google-cloud-sdk.list; \

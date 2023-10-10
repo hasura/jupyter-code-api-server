@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Transition } from '@headlessui/react';
+import React, { useState } from "react";
+import { Transition } from "@headlessui/react";
 
-function Dropdown({ items, onItemClick }) {
+function Dropdown({ items, onItemClick, alreadySelectedItem }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -23,10 +23,16 @@ function Dropdown({ items, onItemClick }) {
         className="bg-white text-black leading-8 font-inter font-semibold text-[14px] rounded-[100px] py-3 px-6 w-72 my-2 focus:outline-none relative border-2 border-black"
         title="Select the .ipynb file to serve the APIs from"
       >
-        {selectedItem || 'Select Notebook'}
-        <span className={`ml-2 ${isOpen ? 'transform rotate-180' : ''}`}>
-          &#9660; {/* ASCII downward arrow */}
-        </span>
+        <div className="flex">
+          <div className="w-64 whitespace-nowrap truncate overflow-visible">
+            {selectedItem ||
+              alreadySelectedItem ||
+              "Select Notebook to serve API"}
+          </div>
+          <span className={`ml-2 ${isOpen ? "transform rotate-180" : ""}`}>
+            &#9660; {/* ASCII downward arrow */}
+          </span>
+        </div>
       </button>
       <Transition
         show={isOpen}
